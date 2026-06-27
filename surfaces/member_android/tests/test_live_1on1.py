@@ -3,7 +3,7 @@ Live 1:1 Cancel Session test cases
 FORME-7824 | FORME-7821 | FORME-7807
 """
 import pytest
-from pages.live_page import LivePage
+from surfaces.member_android.pages.live_page import LivePage
 
 
 @pytest.fixture()

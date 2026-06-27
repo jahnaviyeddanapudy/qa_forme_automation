@@ -3,8 +3,8 @@ Post-Session Survey test cases
 FORME-1861 | FORME-1869 | FORME-1871
 """
 import pytest
-from pages.studio_page import StudioPage
-from pages.live_page import LivePage
+from surfaces.member_android.pages.studio_page import StudioPage
+from surfaces.member_android.pages.live_page import LivePage
 
 
 @pytest.fixture()

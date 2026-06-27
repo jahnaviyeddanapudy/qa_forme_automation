@@ -2,7 +2,7 @@ from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
 from selenium.webdriver.common.actions.pointer_input import PointerInput
 from selenium.webdriver.common.actions import interaction
-from pages.base_page import BasePage
+from surfaces.member_android.pages.base_page import BasePage
 
 
 class MessagesPage(BasePage):

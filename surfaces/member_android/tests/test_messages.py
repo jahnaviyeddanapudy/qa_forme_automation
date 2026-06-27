@@ -3,8 +3,8 @@ Messages test cases
 FORME-2147 | FORME-2150 | FORME-2152 | FORME-2154
 """
 import pytest
-from pages.messages_page import MessagesPage
-from pages.studio_page import StudioPage
+from surfaces.member_android.pages.messages_page import MessagesPage
+from surfaces.member_android.pages.studio_page import StudioPage
 
 
 @pytest.fixture()

@@ -8,7 +8,7 @@ The content-desc was moved from the root view to the inner image element.
 WeekStatsDayCheckmarksView no longer sets it on views[dow]?.root.
 """
 import pytest
-from pages.studio_page import StudioPage
+from surfaces.member_android.pages.studio_page import StudioPage
 
 
 @pytest.fixture()

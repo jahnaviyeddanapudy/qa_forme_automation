@@ -1,4 +1,4 @@
-from pages.base_page import BasePage
+from surfaces.member_android.pages.base_page import BasePage
 
 
 class LivePage(BasePage):

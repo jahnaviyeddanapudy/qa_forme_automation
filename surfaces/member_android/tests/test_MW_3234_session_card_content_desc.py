@@ -4,7 +4,7 @@ VODClassViewHolder now sets card.contentDescription = workout.sessionType.toStri
 enabling Appium to locate session cards by type.
 """
 import pytest
-from pages.studio_page import StudioPage
+from surfaces.member_android.pages.studio_page import StudioPage
 
 
 @pytest.fixture()

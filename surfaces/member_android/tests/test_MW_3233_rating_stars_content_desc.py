@@ -7,7 +7,7 @@ PostClassSurveyAdapter sets:
 where toSnakeCase() now also lowercases the result (StringExtensions.kt MW-3233).
 """
 import pytest
-from pages.studio_page import StudioPage
+from surfaces.member_android.pages.studio_page import StudioPage
 
 
 @pytest.fixture()

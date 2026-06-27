@@ -3,7 +3,7 @@ from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import StaleElementReferenceException, WebDriverException
-from pages.base_page import BasePage
+from surfaces.member_android.pages.base_page import BasePage
 
 
 class StudioPage(BasePage):

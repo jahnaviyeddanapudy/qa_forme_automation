@@ -3,7 +3,7 @@ Studio / Programs test cases
 FORME-1902
 """
 import pytest
-from pages.studio_page import StudioPage
+from surfaces.member_android.pages.studio_page import StudioPage
 
 
 @pytest.fixture()

@@ -3,8 +3,8 @@ Workout History test cases
 FORME-1875 | FORME-1887
 """
 import pytest
-from pages.studio_page import StudioPage
-from pages.api_client import SESSION_TYPE_LIFT_VOD, SESSION_TYPE_ANDROID_VOD
+from surfaces.member_android.pages.studio_page import StudioPage
+from surfaces.member_android.pages.api_client import SESSION_TYPE_LIFT_VOD, SESSION_TYPE_ANDROID_VOD
 
 
 @pytest.fixture()

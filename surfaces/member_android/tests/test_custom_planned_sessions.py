@@ -3,7 +3,7 @@ Custom Planned Sessions (CPS) test cases
 FORME-1769 | FORME-1770 | FORME-1778 | FORME-1782 | FORME-1801
 """
 import pytest
-from pages.studio_page import StudioPage
+from surfaces.member_android.pages.studio_page import StudioPage
 
 
 @pytest.fixture(scope="class")

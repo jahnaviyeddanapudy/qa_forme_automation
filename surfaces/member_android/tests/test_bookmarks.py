@@ -3,7 +3,7 @@ Bookmarks test cases
 FORME-1819 | FORME-1833 | FORME-1825
 """
 import pytest
-from pages.studio_page import StudioPage
+from surfaces.member_android.pages.studio_page import StudioPage
 
 
 @pytest.fixture()

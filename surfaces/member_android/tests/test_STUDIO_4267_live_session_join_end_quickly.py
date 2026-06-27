@@ -13,7 +13,7 @@ rtcEngine non-null, allowing a second init on rejoin. Fix:
 Pre-condition: A Live 1:1 session must be active (trainer is streaming).
 """
 import pytest
-from pages.live_page import LivePage
+from surfaces.member_android.pages.live_page import LivePage
 
 
 @pytest.fixture()

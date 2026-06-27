@@ -3,7 +3,7 @@ Third-Party Music test cases
 FORME-1969 | FORME-1961 | FORME-1960 | FORME-1973
 """
 import pytest
-from pages.studio_page import StudioPage
+from surfaces.member_android.pages.studio_page import StudioPage
 
 
 @pytest.fixture()

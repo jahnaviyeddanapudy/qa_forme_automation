@@ -3,7 +3,7 @@ Settings test cases
 FORME-1728 | FORME-1730 | FORME-1733
 """
 import pytest
-from pages.settings_page import SettingsPage
+from surfaces.member_android.pages.settings_page import SettingsPage
 
 
 @pytest.fixture(autouse=True)
