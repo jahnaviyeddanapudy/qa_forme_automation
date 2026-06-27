@@ -1,0 +1,14 @@
+"""LOCAL Studio configuration for Silvanus's Studio.
+
+This file is GITIGNORED. Each QA has their own. Values here override
+the defaults in config.py.
+
+To regenerate from scratch, copy config_local.py.example to
+config_local.py and edit.
+"""
+
+# On Silvanus's Studio:
+#   Recycler index 0 = ONE (guest, no schedule)
+#   Recycler index 1 = SILVANUS (owner, weekly plan, Live 1:1 sessions)
+OWNER_PROFILE_INDEX = 1
+GUEST1_PROFILE_INDEX = 0
