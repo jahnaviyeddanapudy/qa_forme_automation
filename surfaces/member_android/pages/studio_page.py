@@ -1513,7 +1513,7 @@ class StudioPage(BasePage):
             return True
 
         # API check: confirm a completed workout of the specific session type exists.
-        from pages.api_client import get_history_workouts
+        from surfaces.member_android.pages.api_client import get_history_workouts
         try:
             workouts = get_history_workouts(api_token, session_type=session_type)
             return len(workouts) > 0
