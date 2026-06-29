@@ -450,8 +450,62 @@
       <p><strong>Push frequency:</strong> ~40% of working days have at least one Kotlin commit (36/90 days). Multiple commits/day scale cost proportionally.</p>
       <p><strong>800 test cases:</strong> 80 page files &times; 1,500 chars + 100 test files &times; 2,000 chars &asymp; 80,000 tokens context.</p>
       <p><strong>1,500 test cases:</strong> 150 page files &times; 1,500 chars + 188 test files &times; 2,000 chars &asymp; 150,000 tokens context. Total input per run ~164,000 tokens &mdash; fits within 200k window but tight for large weekly batches. Selective context loading (only load files relevant to the changed Kotlin feature) is required beyond this scale.</p>
-      <p><strong>Not included:</strong> GitHub Actions runner minutes (free tier) &middot; Human review time &middot; member_android bot (similar cost profile)</p>
+      <p><strong>Not included in Claude API cost:</strong> GitHub Actions runner minutes (see section below) &middot; Human review time &middot; member_android bot (similar cost profile)</p>
     </div>
+  </div>
+
+  <!-- GitHub Actions charges -->
+  <div class="section">
+    <div class="section-title">GitHub Actions Runner Minutes</div>
+    <div class="info-box context-box" style="margin-bottom:20px">
+      <p><strong>What are runner minutes?</strong> Every time the claw bot workflow runs, GitHub spins up a virtual machine (the runner) to execute the job — checkout, pip install, Python script, PR creation. The time that VM is alive is billed as runner minutes.</p>
+      <p><strong>Who gets charged?</strong> Minutes are billed to the repo where the workflow lives. The claw bot runs on <code>Formelife/Android-Member-App</code>, so minutes are charged to <strong>Formelife's GitHub account</strong>, not to <code>jahnaviyeddanapudy</code>.</p>
+      <p><strong>Public vs private:</strong> Public repos get <strong>unlimited free minutes</strong>. Minutes only count against the free tier for private repos.</p>
+    </div>
+
+    <p style="font-size:0.82rem;font-weight:600;color:#a0aec0;margin-bottom:12px">Free tier by account type (private repos)</p>
+    <div style="overflow-x:auto;margin-bottom:24px">
+    <table>
+      <thead><tr><th>Account Type</th><th>Free min / month</th><th>Linux rate beyond free</th><th>Windows rate</th><th>macOS rate</th></tr></thead>
+      <tbody>
+        <tr><td class="highlight">GitHub Free</td><td class="win">2,000 min</td><td>$0.008 / min</td><td>$0.016 / min</td><td>$0.08 / min</td></tr>
+        <tr><td class="highlight">GitHub Pro</td><td class="win">3,000 min</td><td>$0.008 / min</td><td>$0.016 / min</td><td>$0.08 / min</td></tr>
+        <tr><td class="highlight">GitHub Team</td><td class="win">3,000 min</td><td>$0.008 / min</td><td>$0.016 / min</td><td>$0.08 / min</td></tr>
+        <tr><td class="highlight">GitHub Enterprise</td><td class="win">50,000 min</td><td>$0.008 / min</td><td>$0.016 / min</td><td>$0.08 / min</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="note" style="margin-bottom:20px">The claw bot uses <code>ubuntu-latest</code> (Linux, 1&times; multiplier). Windows = 2&times;, macOS = 10&times; — neither applies here.</p>
+
+    <p style="font-size:0.82rem;font-weight:600;color:#a0aec0;margin-bottom:12px">Runner minutes per claw bot run</p>
+    <div style="overflow-x:auto;margin-bottom:24px">
+    <table>
+      <thead><tr><th>Approach</th><th>Jobs spawned</th><th>Time / job</th><th>Runner min / run</th><th>Cost / run (if within free tier)</th></tr></thead>
+      <tbody>
+        <tr class="row-single"><td class="highlight">Single branch</td><td>1 job</td><td>~3&ndash;4 min</td><td class="win">~4 min</td><td class="win">$0.00</td></tr>
+        <tr class="row-parallel"><td class="highlight">Parallel (4 batches)</td><td>4 concurrent jobs</td><td>~3 min each</td><td class="warn">~12 min total</td><td class="win">$0.00</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="note" style="margin-bottom:20px">Parallel batches each spin up their own runner — 4 jobs &times; 3 min = 12 runner minutes per weekly run, even though wall-clock is only 3 minutes.</p>
+
+    <p style="font-size:0.82rem;font-weight:600;color:#a0aec0;margin-bottom:12px">Quarterly runner minute usage vs free tier</p>
+    <div style="overflow-x:auto;margin-bottom:8px">
+    <table>
+      <thead><tr><th>Cadence</th><th>Approach</th><th>Runs / qtr</th><th>Runner min / qtr</th><th>Runner min / month</th><th>% of 2,000 free min</th><th>Overage cost</th></tr></thead>
+      <tbody>
+        <tr class="row-single"><td rowspan="2" style="color:#9f7aea;font-weight:600;vertical-align:middle">Weekly</td>
+          <td class="highlight">Single</td><td>13</td><td>~52 min</td><td>~17 min</td><td class="win">&lt;1%</td><td class="win">$0.00</td></tr>
+        <tr class="row-parallel">
+          <td class="highlight">Parallel (4 batches)</td><td>13</td><td>~156 min</td><td>~52 min</td><td class="win">~2.6%</td><td class="win">$0.00</td></tr>
+        <tr class="row-single"><td rowspan="2" style="color:#63b3ed;font-weight:600;vertical-align:middle">Daily</td>
+          <td class="highlight">Single</td><td>36</td><td>~108 min</td><td>~36 min</td><td class="win">~1.8%</td><td class="win">$0.00</td></tr>
+        <tr class="row-parallel">
+          <td class="highlight">Parallel (4 batches)</td><td>36</td><td>~432 min</td><td>~144 min</td><td class="win">~7.2%</td><td class="win">$0.00</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="note">All scenarios are well within the 2,000 min/month free tier. Formelife's account likely has other workflows running too — the claw bot adds at most ~144 min/month (daily parallel), leaving &gt;90% of the free tier available for other CI jobs.</p>
   </div>
 
   <!-- Verdict -->
