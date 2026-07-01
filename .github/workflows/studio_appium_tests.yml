@@ -1,0 +1,107 @@
+name: Studio Appium Tests
+
+# Triggered whenever the Claw Bot pushes a new branch to this repo.
+# Runs on the self-hosted runner (your Mac) which has local network
+# access to the ADB device. Results are commented on the open PR.
+on:
+  push:
+    branches:
+      - 'claw-bot/**'
+
+jobs:
+  run-appium-tests:
+    runs-on: self-hosted
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout qa_forme_automation
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            pip install pytest appium-python-client selenium
+          fi
+
+      # ADB_DEVICE is a repo variable (Settings → Variables) set to the
+      # TCP/IP address of the target device, e.g. 192.168.1.93:5555.
+      - name: Connect ADB device
+        if: vars.ADB_DEVICE != ''
+        env:
+          ADB_DEVICE: ${{ vars.ADB_DEVICE }}
+        run: |
+          echo "Connecting to $ADB_DEVICE…"
+          adb connect "$ADB_DEVICE"
+          sleep 2
+
+      - name: Check for connected ADB devices
+        id: adb_check
+        run: |
+          if ! command -v adb &> /dev/null; then
+            echo "adb not found on this runner."
+            echo "has_device=false" >> $GITHUB_OUTPUT
+          else
+            DEVICE_COUNT=$(adb devices 2>/dev/null \
+              | grep -v "List of devices" \
+              | grep -c "device$" || true)
+            if [ "$DEVICE_COUNT" -gt 0 ]; then
+              echo "Found $DEVICE_COUNT device(s)."
+              echo "has_device=true" >> $GITHUB_OUTPUT
+            else
+              echo "No ADB devices found."
+              echo "has_device=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Run Studio Appium Tests
+        id: appium_tests
+        if: steps.adb_check.outputs.has_device == 'true'
+        run: |
+          python -m pytest -m studio surfaces/studio_android/ --tb=short -q
+        continue-on-error: true
+
+      - name: Find open PR for this branch
+        id: find_pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(gh pr list \
+            --repo jahnaviyeddanapudy/qa_forme_automation \
+            --head "${{ github.ref_name }}" \
+            --state open \
+            --json number \
+            --jq '.[0].number // empty')
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+
+      - name: Comment test results on PR
+        if: steps.find_pr.outputs.pr_number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ steps.adb_check.outputs.has_device }}" != "true" ]; then
+            STATUS="⏭️ skipped — no ADB device connected to runner"
+          elif [ "${{ steps.appium_tests.outcome }}" = "success" ]; then
+            STATUS="✅ passed"
+          else
+            STATUS="❌ failed — review run logs"
+          fi
+
+          gh pr comment "${{ steps.find_pr.outputs.pr_number }}" \
+            --repo jahnaviyeddanapudy/qa_forme_automation \
+            --body "### Appium Test Results
+
+          | Check | Status |
+          |-------|--------|
+          | Studio Appium tests (\`pytest -m studio\`) | ${STATUS} |
+
+          **Runner:** self-hosted (local ADB device)
+          **Run:** [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
