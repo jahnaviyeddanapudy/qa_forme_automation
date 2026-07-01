@@ -22,9 +22,15 @@ class BasePage:
     def by_id(self, resource_id):
         return (AppiumBy.ID, f"{self.APP_PACKAGE}:id/{resource_id}")
 
+    def _id(self, resource_id):
+        return f"{self.APP_PACKAGE}:id/{resource_id}"
+
     def find_by_id(self, resource_id, timeout=None):
         w = WebDriverWait(self.driver, timeout or self.WAIT_DEFAULT)
         return w.until(EC.presence_of_element_located(self.by_id(resource_id)))
+
+    def find_all_by_id(self, resource_id):
+        return self.driver.find_elements(AppiumBy.ID, f"{self.APP_PACKAGE}:id/{resource_id}")
 
     def tap_by_id(self, resource_id, timeout=None):
         w = WebDriverWait(self.driver, timeout or self.WAIT_DEFAULT)

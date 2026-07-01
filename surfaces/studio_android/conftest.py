@@ -222,7 +222,7 @@ def login_at_profile_index(driver, profile_index, password=None,
 
 
 def _create_studio_driver():
-    return create_driver(APP_PACKAGE, APP_ACTIVITY, platform="android")
+    return create_driver(APP_PACKAGE, APP_ACTIVITY)
 
 
 # =========================================================

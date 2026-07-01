@@ -38,6 +38,7 @@ class HomePage(StudioBasePage):
     HEADER_FRAGMENT_ID = "header_fragment"
     TAB_LAYOUT_ID = "tab_layout"
     UTILITY_BUTTON_ID = "utility_button"
+    SETTINGS_BUTTON_ID = "button_settings"
     APPLE_MUSIC_BUTTON_ID = "apple_music_button"
     NAV_HOST_FRAGMENT_ID = "nav_host_fragment"
 
@@ -163,9 +164,13 @@ class HomePage(StudioBasePage):
         self._tap_tab(self.TAB_LIVE_1ON1_DESC)
 
     def tap_utility_button(self):
-        """Tap the utility button in the header (gear/settings icon).
-        TODO: confirm what this opens — capture a dump after tapping."""
+        """Tap the utility button in the header (gear/settings icon)."""
         self.tap_by_id(self.UTILITY_BUTTON_ID)
+
+    def tap_settings(self):
+        """Open the main Settings screen: utility button → SETTINGS panel button."""
+        self.tap_by_id(self.UTILITY_BUTTON_ID)
+        self.tap_by_id(self.SETTINGS_BUTTON_ID)
 
     def tap_apple_music_button(self):
         """Tap the Apple Music integration button. Note this id appears

@@ -32,7 +32,7 @@ STUDIO_GUEST_EMAIL = os.environ.get(
     "FORME_STUDIO_GUEST_EMAIL",
     "silvanus.thomas+prod_member_guest1@formelife.com",
 )
-STUDIO_PASSWORD = os.environ.get("FORME_PASSWORD", "Trnr!Clmbr")
+STUDIO_PASSWORD = os.environ.get("FORME_PASSWORD", "Test123!")
 
 
 # =========================================================

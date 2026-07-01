@@ -36,8 +36,8 @@ class SettingsSystemPage(StudioBasePage):
     # ------------------------------------------------------------------ #
     # Settings list row IDs (SystemSettingsAdapter item layout)
     # ------------------------------------------------------------------ #
-    ROW_TITLE_ID = "text_title"
-    ROW_DESCRIPTION_ID = "text_description"
+    ROW_TITLE_ID = "label_header"
+    ROW_DESCRIPTION_ID = "label_description"
     ROW_ACTION_BUTTON_ID = "button_action"
 
     # ------------------------------------------------------------------ #
@@ -90,38 +90,39 @@ class SettingsSystemPage(StudioBasePage):
     def get_timezone_description(self) -> str:
         """Return the current timezone description text shown in the
         Time Zone row (e.g. 'America/New_York')."""
-        title_el = self._find_row_by_title(self.TIMEZONE_SETTING_TITLE)
-        if title_el is None:
-            raise AssertionError("Time Zone setting row not found")
-        # The description is a sibling element — find all description
-        # elements and match positionally via index in the flat list.
-        title_els = self.driver.find_elements(
-            AppiumBy.ID, self._id(self.ROW_TITLE_ID)
+        # XPath: any element whose child is label_header="Time Zone", pick its label_description child.
+        # Avoids parent-axis (..) which UiAutomator2 does not support.
+        xpath = (
+            f"//*[*[@resource-id='{self._id(self.ROW_TITLE_ID)}'"
+            f" and @text='{self.TIMEZONE_SETTING_TITLE}']]"
+            f"/*[@resource-id='{self._id(self.ROW_DESCRIPTION_ID)}']"
         )
-        desc_els = self.driver.find_elements(
-            AppiumBy.ID, self._id(self.ROW_DESCRIPTION_ID)
-        )
-        for idx, t in enumerate(title_els):
-            if t.text.strip() == self.TIMEZONE_SETTING_TITLE:
-                if idx < len(desc_els):
-                    return desc_els[idx].text.strip()
+        try:
+            els = self.driver.find_elements(AppiumBy.XPATH, xpath)
+            if els:
+                return els[0].text.strip()
+        except Exception as exc:
+            log.debug("get_timezone_description xpath error: %s", exc)
         raise AssertionError("Time Zone description element not found")
 
     def tap_timezone_pick_button(self):
         """Tap the PICK action button on the Time Zone row to open
         TimezonePickerDialog."""
-        title_els = self.driver.find_elements(
-            AppiumBy.ID, self._id(self.ROW_TITLE_ID)
+        # XPath: any element whose child is label_header="Time Zone", pick its button_action child.
+        # Avoids parent-axis (..) which UiAutomator2 does not support.
+        xpath = (
+            f"//*[*[@resource-id='{self._id(self.ROW_TITLE_ID)}'"
+            f" and @text='{self.TIMEZONE_SETTING_TITLE}']]"
+            f"/*[@resource-id='{self._id(self.ROW_ACTION_BUTTON_ID)}']"
         )
-        action_els = self.driver.find_elements(
-            AppiumBy.ID, self._id(self.ROW_ACTION_BUTTON_ID)
-        )
-        for idx, t in enumerate(title_els):
-            if t.text.strip() == self.TIMEZONE_SETTING_TITLE:
-                if idx < len(action_els):
-                    action_els[idx].click()
-                    log.info("Tapped PICK on Time Zone row")
-                    return
+        try:
+            els = self.driver.find_elements(AppiumBy.XPATH, xpath)
+            if els:
+                els[0].click()
+                log.info("Tapped PICK on Time Zone row")
+                return
+        except Exception as exc:
+            log.debug("tap_timezone_pick_button xpath error: %s", exc)
         raise AssertionError("Time Zone PICK button not found")
 
     def is_timezone_picker_dialog_visible(self, timeout: int = 8) -> bool:

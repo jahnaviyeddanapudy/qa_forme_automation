@@ -71,14 +71,14 @@ GLOBAL_TZ_SPOT_CHECK = [
 # ---------------------------------------------------------------------------
 
 @pytest.fixture(scope="module")
-def settings_driver(request):
+def settings_driver():
     """Login as owner and yield a driver already on the Home screen."""
     from surfaces.studio_android.conftest import (
         _create_studio_driver,
         login_at_profile_index,
     )
 
-    driver = _create_studio_driver(request)
+    driver = _create_studio_driver()
     login_at_profile_index(driver, OWNER_PROFILE_INDEX)
     yield driver
     try:
@@ -92,28 +92,41 @@ def settings_driver(request):
 # ---------------------------------------------------------------------------
 
 def _navigate_to_system_settings(driver) -> SettingsSystemPage:
-    """From Home, navigate: Settings button → System → return page object."""
+    """From any screen, navigate back to Home then into System settings."""
+    _return_to_home(driver)
     home = HomePage(driver)
     home.tap_settings()
-    # SettingsMainFragment: tap the System row / button
     system_page = SettingsSystemPage(driver)
-    # Tap the 'System' list item or button — text-based tap is reliable
-    # across layout variants.
-    system_page.tap_by_text("System")
+    system_page.tap_by_id("button_system")
     assert system_page.is_loaded(timeout=10), "System settings screen did not load"
     log.info("Navigated to System settings")
     return system_page
 
 
 def _return_to_home(driver):
-    """Pop back to Home from wherever we are."""
+    """Close any open settings overlays then wait for Home."""
+    from appium.webdriver.common.appiumby import AppiumBy
     home = HomePage(driver)
-    # go_back up to 4 levels (dialog → system settings → settings main → home)
-    for _ in range(4):
+    # Tap button_close up to 3 times to dismiss system settings → main settings → overlay
+    for _ in range(3):
+        try:
+            close_els = driver.find_elements(
+                AppiumBy.ID, f"com.formelife.studio:id/button_close"
+            )
+            if close_els:
+                close_els[0].click()
+                import time as _t; _t.sleep(0.8)
+            else:
+                break
+        except Exception:
+            break
+    # Fall back to back-press if still not on home
+    for _ in range(3):
         try:
             if home.is_loaded(timeout=2):
                 return
             driver.back()
+            import time as _t; _t.sleep(0.8)
         except Exception:
             break
 

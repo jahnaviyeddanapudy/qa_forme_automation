@@ -15,6 +15,9 @@ def create_driver(app_package, app_activity):
     options.no_reset = True
     options.set_capability("appium:disableWindowAnimation", True)
     options.set_capability("appium:ignoreHiddenApiPolicyError", True)
+    # Studio device has a Device Owner (MDM) policy that blocks io.appium.settings
+    # from launching as a foreground activity. Skip device init to work around it.
+    options.set_capability("appium:skipDeviceInitialization", True)
     if device_udid:
         options.set_capability("appium:udid", device_udid)
 
